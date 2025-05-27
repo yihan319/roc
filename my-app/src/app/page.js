@@ -20,13 +20,18 @@ export default function Home() {
     <div className="col-12 col-md-4">
     <div className="bg-[#2894FF] grid grid-rows-[20px_1fr_20px]  min-h-screen p-4 pb-20 gap-12 sm:p-20 font-[family-name:var(--font-geist-sans)]">
      <div className="fixed top-0 left-0 w-full bg-gradient-to-r from-[#00BB00] to-[#0066CC] shadow-lg p-2 z-50">
-  <ul className="menu flex gap-4 text-xl lg:text-2xl">
-    <li><a href="#">介紹</a></li>
+  <div className="flex justify-between items-center">
+  <ul className="menu flex gap-4 text-xl lg:text-3xl">
     <li><a href="/">首頁</a></li>
+    <li><a href="/map">地圖</a></li>
     <li><a href="#">通報狀況</a></li>
-    <li><a href="#">常見問題</a></li>
-    <li><a href="/form">註冊</a></li>
   </ul>
+  <ul className="menu flex gap-4 text-xl lg:text-3xl">
+    <li><a href="/signup">註冊</a></li>
+    <li><a href="/signin">登入</a></li>
+  </ul>
+</div>
+
 </div>
       <main className="flex flex-col gap-[32px] row-start-2 ">
         <div className="flex items-center gap-4">
