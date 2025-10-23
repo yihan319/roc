@@ -3,161 +3,89 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState, useEffect } from 'react';
 
-function App() {
-  const [width, setWidth] = useState(window.innerWidth);
-
-  useEffect(() => {
-    const handleResize = () => setWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-}
-
 export default function Home() {
+  const [floodData, setFloodData] = useState([]);
+
+  // 抓資料庫資料
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/news");
+        const data = await res.json();
+        setFloodData(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
-   
-  <div className="row">
-    <div className="col-12 col-md-4">
-    <div className="bg-[#2894FF] grid grid-rows-[20px_1fr_20px]  min-h-screen p-4 pb-20 gap-12 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-     <div className="fixed top-0 left-0 w-full bg-gradient-to-r from-[#00BB00] to-[#0066CC] shadow-lg p-2 z-50">
-  <div className="flex justify-between items-center">
-  <ul className="menu flex gap-4 text-xl lg:text-3xl">
-    <li><a href="/">首頁</a></li>
-    <li><a href="/map">地圖</a></li>
-    <li><a href="#">通報狀況</a></li>
-  </ul>
-  <ul className="menu flex gap-4 text-xl lg:text-3xl">
-    <li><a href="/signup">註冊</a></li>
-    <li><a href="/signin">登入</a></li>
-  </ul>
-</div>
+    <div className="min-h-screen bg-[#F5F5F5] font-[family-name:var(--font-geist-sans)] flex flex-col items-center justify-center">
+      
+      {/* 導覽列 */}
+      <div className="fixed top-0 left-0 w-full shadow-lg p-2 z-50" style={{ backgroundColor: '#8EB9CC' }}>
+        <div className="flex justify-between items-center">
+          <ul className="menu flex gap-4 text-xl lg:text-3xl">
+            <li><Link href="/" className="font-bold" style={{ color: '#2C3E50' }}>首頁</Link></li>
+            <li><a href="https://fhy.wra.gov.tw/fhyv2/alert/warn" className="font-bold" style={{ color: '#2C3E50' }}>水情資訊</a></li>
+            <li><a href="https://www.cwa.gov.tw/V8/C/" className="font-bold" style={{ color: '#2C3E50' }}>天氣狀況</a></li>
+            <li><Link href="http://127.0.0.1:5000" className="font-bold" style={{ color: '#2C3E50' }}>地圖路徑</Link></li>
+             <li><Link href="/pages/map" className="font-bold" style={{ color: '#2C3E50' }}>影像辨識</Link></li>
+          </ul>
+          <ul className="menu flex gap-4 text-xl lg:text-3xl">
+            <li><Link href="/pages/signup" className="font-bold" style={{ color: '#2C3E50' }}>註冊</Link></li>
+            <li><Link href="/pages/signin" className="font-bold" style={{ color: '#2C3E50' }}>登入</Link></li>
+          </ul>
+        </div>
+      </div>
 
-</div>
-      <main className="flex flex-col gap-[32px] row-start-2 ">
+      {/* 主標題區 */}
+      <div className="pt-24 px-4 sm:px-20 flex flex-col items-start gap-8">
         <div className="flex items-center gap-4">
-      <Image
-      src="/logo.svg"
-      alt="logo"
-      className="h-16 w-16 md:h-25 md:w-25"
-      width={50}   
-      height={50} 
-     />
-      <h1 className="text-3xl lg:text-5xl font-bold py-1">淹水預測及通報系統
-      <p className="text-sm lg:text-base py-1 " >
-        FLOODING WATER AND FORECAST REPORTING SYSTEM
-      </p>
-      </h1>
-      </div>
-      <div className="text-center bg-[#ECF5FF] text-black gap-3 sm:gap-6 flex flex-row justify-center items-cente ">
-      <div className="hidden md:block">
-  <Link href="/sun" className="text-2xl lg:text-3xl hover:underline hover:underline-offset-4">
-    水情資訊
-  </Link>
-  </div>
-  <div className="hidden md:block">
-  <Link href="/rain" className="text-2xl lg:text-3xl hover:underline hover:underline-offset-4">
-    天氣狀況
-  </Link>
-  </div>
-  <div className="hidden md:block">
-  <Link href="/warn" className="text-2xl lg:text-3xl hover:underline hover:underline-offset-4">
-    淹水預測
-  </Link>
-  </div>
-  <div className="hidden md:block">
-  <Link href="/text" className="text-3xl hover:underline hover:underline-offset-4">
-    訊息通知
-  </Link>
-  </div>
-  <div className="hidden md:block">
-  <Link href="/location" className="text-3xl hover:underline hover:underline-offset-4">
-    地圖路徑
-  </Link>
-  </div>
-</div>
-<div className="flex flex-row ">
-  <div className="fixed top-[35%] md:top-[55%] left-[6%] h-full bg-base-200 p-4">
-    <ul className="menu bg-base-200 rounded-box text-left space-y-2" >
-          <li>
-        <a href="/sun"className="tooltip tooltip-right" data-tip="Details">
           <Image
-            src="/sun.svg"
-            alt="sun"
-            className="h-10 w-10"
-            width={50}   
+            src="/logonew.svg"
+            alt="logo"
+            className="h-16 w-25 md:h-25 md:w-30"
+            width={90}   
             height={50} 
           />
-        </a>
-      </li>
-        <li>
-        <a href="/rain"className="tooltip tooltip-right" data-tip="Details">
-          <Image
-            src="/rain.svg"
-            alt="rain"
-            className="h-10 w-10"
-            width={50}   
-            height={50} 
-          />
-        </a>
-      </li>
-      <li>
-        <a href="text"className="tooltip tooltip-right" data-tip="Details">
-          <Image
-            src="/text.svg"
-            alt="text"
-            className="h-10 w-10"
-            width={20}   
-            height={20} 
-          />
-        </a>
-      </li>
-      <li>
-        <a href="warn"className="tooltip tooltip-right" data-tip="Details">
-          <Image
-            src="/warn.svg"
-            alt="warn"
-            className="h-10 w-10"
-            width={20}   
-            height={20} 
-          />
-        </a>
-      </li>
-      <li>
-        <a href="location" className="tooltip tooltip-right" data-tip="Details">
-          <Image
-            src="/location.svg"
-            alt="location"
-            className="h-10 w-10"
-            width={20}   
-            height={20} 
-          />
-        </a>
-      </li>
- 
-</ul>
-</div>
-<div className="flex flex-1 justify-center items-center min-h-[300px]">
-    <Image
-      src="/wave.jpg"
-      alt="wave"
-      className="w-[900px] h-[400px] md:w-[900px] md:h-[600px] object-cover"
-      width={150}
-      height={150}
-      />
-      </div>
-</div>
-<div className="absolute top-[70%] md:top-[100%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#005AB5] text-center   p-12 rounded-lg">
-    <p className="text-5xl lg:text-7xl font-bold ">2025</p>
-    <p className="text-3xl lg:text-6xl font-bold">水文資訊</p>
-    <p className="text-3xl lg:text-6xl font-bold">為您統整</p>
-  </div> 
-      </main>
-      <footer >
-       
-      </footer>
-    </div>
-    </div>
-    </div>
+          <h1 className="text-3xl lg:text-5xl font-bold py-1 text-left" style={{color: 'black'}}>
+            淹水預測及通報系統
+            <p className="text-sm lg:text-base py-1" style={{color: 'black'}}>
+              FLOODING WATER AND FORECAST REPORTING SYSTEM
+            </p>
+          </h1>
+        </div>
 
+        {/* 最新消息標籤與滑動小卡區塊 */}
+        <div className="w-full max-w-4xl">
+          <div className="flex justify-start mb-4" style={{ marginLeft: 'auto', marginRight: '1rem' }}> {/* 靠右一點點 */}
+            <h2 className="text-2xl font-semibold text-gray-800">最新消息</h2>
+          </div>
+          <div className="overflow-y-auto h-96 py-4" style={{ maxHeight: '24rem' }}>
+            {floodData.length === 0 && (
+              <p className="text-gray-500">目前沒有資料</p>
+            )}
+            {floodData.map((item) => (
+              <div key={item._id} className="bg-white shadow-md rounded-lg p-4 mb-4 w-full" style={{ minWidth: '100%' }}>
+                <h2 className="text-xl font-semibold">
+                  <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    {item.title}
+                  </a>
+                </h2>
+                <p className="text-sm text-gray-600 overflow-hidden line-clamp-3" style={{ maxHeight: '4.5em' }}>
+                  {item.summary}
+                </p>
+                <p className="text-xs text-gray-400 mt-2">
+                  {new Date(item.published_at || item.crawled_at).toLocaleString()}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+    </div>
   );
 }
