@@ -67,9 +67,14 @@ export async function GET(req) {
 
   try {
     let cases;
-    if (session.role === "admin") {
+    const url = new URL(req.url);
+    const forAdmin = url.searchParams.get("forAdmin") === "true";
+    if (session.role === "admin"&& forAdmin) {
+    cases = await Case.find({ status: { $in: ["pending", "awaiting_review"] } }).lean();
+    } else if (session.role === "admin") {
+      // dashboard 使用，抓全部案件
       cases = await Case.find().lean();
-    } else if (session.role === "volunteer" || (session.user && session.user.volunteerStatus === "approved")) {
+     } else if (session.role === "volunteer" || (session.user && session.user.volunteerStatus === "approved")) {
       cases = await Case.find({
         $or: [
           { status: "approved" },
@@ -114,7 +119,7 @@ export async function PATCH(req) {
   }
 
   try {
-    let caseId, action, completionPhoto;
+    let caseId, action, completionPhoto, reason;
 
     const contentType = req.headers.get("content-type");
     console.log("Received PATCH Content-Type:", contentType);
@@ -124,10 +129,12 @@ export async function PATCH(req) {
       caseId = formData.get("caseId");
       action = formData.get("action");
       completionPhoto = formData.get("completionPhoto");
+      reason = formData.get("reason"); 
     } else {
       const body = await req.json();
       caseId = body.caseId;
       action = body.action;
+      reason = body.reason; 
     }
 
     console.log("Parsed PATCH data:", { caseId, action, hasPhoto: !!completionPhoto });
@@ -147,10 +154,26 @@ export async function PATCH(req) {
       else if (action === "reject") c.status = "rejected";
       else if (action === "approve_completion") c.status = "completed";
       else if (action === "reject_completion") {
-        c.status = "approved";
-        c.completionPhotoUrl = null;
-        c.volunteers = [];
-      }
+        if (!reason) {
+    return NextResponse.json({ error: "退回理由必填" }, { status: 400 });
+  }
+  c.status = "approved"; // 回到可被接案狀態
+  c.completionPhotoUrl = null;
+  c.volunteers = [];
+  c.rejectionNote = reason;
+  if (!c.rejectionNotes) c.rejectionNotes = [];
+  c.rejectionNotes.push({
+    by: session.user?.email || "admin",
+    reason,
+    time: new Date(),
+  });
+
+ // 建議新增一個物件字段
+  if (session.user && session.user.email) {
+    c.rejectionNotes[session.user.email] = reason;
+  }
+  c.volunteers = [];
+}
     } else if (session.role === "volunteer" || (session.user && session.user.volunteerStatus === "approved")) {
       if (action === "take") {
         if (c.status !== "approved" && c.status !== "in_progress") {

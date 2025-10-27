@@ -31,7 +31,7 @@ export default function Home() {
             <li><a href="https://fhy.wra.gov.tw/fhyv2/alert/warn" className="font-bold" style={{ color: '#2C3E50' }}>水情資訊</a></li>
             <li><a href="https://www.cwa.gov.tw/V8/C/" className="font-bold" style={{ color: '#2C3E50' }}>天氣狀況</a></li>
             <li><Link href="http://127.0.0.1:5000" className="font-bold" style={{ color: '#2C3E50' }}>地圖路徑</Link></li>
-             <li><Link href="/pages/map" className="font-bold" style={{ color: '#2C3E50' }}>影像辨識</Link></li>
+             <li><Link href="http://127.0.0.1:5000" className="font-bold" style={{ color: '#2C3E50' }}>影像辨識</Link></li>
           </ul>
           <ul className="menu flex gap-4 text-xl lg:text-3xl">
             <li><Link href="/pages/signup" className="font-bold" style={{ color: '#2C3E50' }}>註冊</Link></li>

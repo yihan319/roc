@@ -171,6 +171,11 @@ export default function VolunteerCasePage() {
         {cases.length === 0 && <p>目前沒有可接案件</p>}
         {cases.map((c) => (
           <div key={c._id} className="border p-4 mb-4 rounded bg-white w-full">
+            {c.rejectionNote && (
+    <p className="text-red-600 mt-2 font-semibold">
+      ⚠️ {c.rejectionNote}
+    </p>
+  )}
             <p>
               <strong>姓名:</strong> {c.name}
             </p>

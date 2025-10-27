@@ -27,19 +27,21 @@ export default function AdminCasePage() {
 
   useEffect(() => {
     const fetchCases = async () => {
-      const res = await fetch("/api/case", { credentials: "include" });
+      const res = await fetch("/api/case?forAdmin=true", { credentials: "include" });
       if (res.ok) setCases(await res.json());
     };
     if (user && user.role === "admin") fetchCases();
   }, [user]);
+  
 
-  const handleAction = async (caseId, action) => {
-    const res = await fetch("/api/case", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ caseId, action }),
-      credentials: "include",
-    });
+
+  const handleAction = async (caseId, action, reason = "") => {
+  const res = await fetch("/api/case", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ caseId, action, reason }),
+    credentials: "include",
+  });
     if (res.ok) {
       const updated = await res.json();
       setCases((prev) => prev.filter((c) => c._id !== updated.case._id));
@@ -169,11 +171,15 @@ export default function AdminCasePage() {
                   通過
                 </button>
                 <button
-                  onClick={() => handleAction(c._id, "reject")}
-                  className="bg-red-500 text-white px-2 py-1 rounded"
-                >
-                  拒絕
-                </button>
+  onClick={() => {
+    const reason = prompt("請輸入退回理由：", "照片模糊或不清晰");
+    if (reason !== null) handleAction(c._id, "reject_completion", reason);
+  }}
+  className="bg-red-500 text-white px-2 py-1 rounded"
+>
+  退回
+</button>
+
               </div>
             )}
             {c.status === "awaiting_review" && (
@@ -185,11 +191,15 @@ export default function AdminCasePage() {
       通過完成
     </button>
     <button
-      onClick={() => handleAction(c._id, "reject_completion")}
-      className="bg-red-500 text-white px-2 py-1 rounded"
-    >
-      退回
-    </button>
+  onClick={() => {
+    const reason = prompt("請輸入退回理由：", "照片模糊或不清晰");
+    if (reason !== null) handleAction(c._id, "reject_completion", reason);
+  }}
+  className="bg-red-500 text-white px-2 py-1 rounded"
+>
+  退回
+</button>
+
   </div>
 )}
 

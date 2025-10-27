@@ -64,7 +64,6 @@ useEffect(() => {
         { key: "rejected", label: "已退回" },
         { key: "in_progress", label: "處理中" },
         { key: "completed", label: "已完成" },
-        ...(user.role === "volunteer" ? [{ key: "available", label: "可接案件" }] : []),
       ];
     } else {
       return [
@@ -78,7 +77,9 @@ useEffect(() => {
   // 篩選案件
   const filteredCases = (() => {
     if (activeTab === "all") return cases;
-
+    if (activeTab === "rejected") {
+      return cases.filter((c) =>  c.rejectionNotes && c.rejectionNotes.length > 0);
+  }
     if (user?.role === "volunteer" && activeTab === "available") {
       return cases.filter((c) => c.status === "approved" && (!c.volunteerId || c.volunteerId === ""));
     }
@@ -365,27 +366,60 @@ useEffect(() => {
 
           {/* 案件內容 */}
           {filteredCases.length === 0 ? (
-            <p className="text-gray-500 text-center">目前無此分類的案件</p>
-          ) : (
-            filteredCases.map((c) => (
-              <div key={c._id} className="border p-4 mb-4 rounded bg-gray-50">
-                <p>
-                  <strong>姓名:</strong> {c.name}
-                </p>
-                <p>
-                  <strong>地址:</strong> {c.address}
-                </p>
-                <p>
-                  <strong>狀態:</strong> {statusLabels[c.status] || c.status}
-                </p>
-                {user?.role === "volunteer" && activeTab === "available" && (
-                  <button className="mt-2 bg-[#005AB5] text-white px-4 py-2 rounded hover:bg-[#003f80]">
-                    接案
-                  </button>
-                )}
-              </div>
-            ))
+  <p className="text-gray-500 text-center">目前無此分類的案件</p>
+) : (
+  filteredCases.map((c) => (
+    <div key={c._id} className="border p-4 mb-4 rounded bg-gray-50">
+      <p>
+        <strong>姓名:</strong> {c.name}
+      </p>
+      <p>
+        <strong>地址:</strong> {c.address}
+      </p>
+      <p>
+        <strong>狀態:</strong> {statusLabels[c.status] || c.status}
+      </p>
+
+      {/* ✅ 顯示審核通過與完成時間 */}
+      {c.status === "approved" && (
+        <p className="text-sm text-gray-500">
+          審核通過時間：{c.updatedAt ? new Date(c.updatedAt).toLocaleString() : "—"}
+        </p>
+      )}
+
+      {c.status === "completed" && (
+        <>
+          <p className="text-sm text-gray-500">
+            完成時間：{c.updatedAt ? new Date(c.updatedAt).toLocaleString() : "—"}
+          </p>
+           {c.rejectionNotes && c.rejectionNotes.length > 0 && (
+  <div className="mt-2 p-2 border rounded bg-red-50">
+    <p className="font-semibold text-red-600">退回紀錄：</p>
+    <ul className="list-disc ml-5 text-sm text-gray-700">
+      {c.rejectionNotes.map((r, idx) => (
+        <li key={idx}>
+          {r.time ? new Date(r.time).toLocaleString() : "—"} - {r.by}: {r.reason}
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
+          {/* ✅ 顯示志工 Gmail */}
+          {c.volunteers && c.volunteers.length > 0 && (
+            <div className="mt-2 text-sm text-gray-700 border-t border-gray-200 pt-2">
+              <p className="font-medium">志工 Gmail：</p>
+              {c.volunteers.map((vol, i) => (
+                <p key={i} className="pl-2 text-gray-600">• {vol}</p>
+              ))}
+            </div>
           )}
+        </>
+      )}
+    </div>
+  ))
+)}
+
         </div>
       </div>
     </div>

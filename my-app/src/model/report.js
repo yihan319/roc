@@ -15,6 +15,7 @@ const ReportSchema = new mongoose.Schema(
       enum: ["pending", "approved", "rejected", "in_progress", "completed", "awaiting_review"],
       default: "pending",
     },
+    rejectionNote: { type: String, default: null },
     volunteers: [{ type: String }], // 指派的志工 email
   },
   { collection: "reports", timestamps: true }
