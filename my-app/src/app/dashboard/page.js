@@ -61,7 +61,7 @@ useEffect(() => {
         { key: "all", label: "全部案件" },
         { key: "pending", label: "審核中" },
         { key: "approved", label: "審核通過" },
-        { key: "rejected", label: "已退回" },
+       
         { key: "in_progress", label: "處理中" },
         { key: "completed", label: "已完成" },
       ];
