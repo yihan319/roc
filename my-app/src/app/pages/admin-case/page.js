@@ -2,12 +2,26 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
+import Image from "next/image";
+import Navbar from "@/components/memberNavbar";
 export default function AdminCasePage() {
   const [cases, setCases] = useState([]);
   const [user, setUser] = useState(null);
   const router = useRouter();
+useEffect(() => {
+  const fetchUser = async () => {
+    try {
+      const res = await fetch("/api/member", { credentials: "include" });
+      if (!res.ok) throw new Error("無法取得使用者資料");
+      const data = await res.json();
+      setUser(data);
+    } catch (err) {
+      console.error("❌ 取得使用者資料失敗:", err);
+    }
+  };
 
+  fetchUser();
+}, []);
   useEffect(() => {
     const fetchUser = async () => {
       const res = await fetch("/api/member", { credentials: "include" });
@@ -56,44 +70,7 @@ export default function AdminCasePage() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col items-center font-[family-name:var(--font-geist-sans)]">
-      <div
-        className="fixed top-0 left-0 w-full shadow-lg p-2 z-50"
-        style={{ backgroundColor: "#8EB9CC" }}
-      >
-        <div className="flex justify-between items-center">
-          <ul className="menu flex gap-4 text-xl lg:text-3xl">
-            <li>
-              <Link href="/dashboard" className="font-bold text-[#2C3E50]">
-                首頁
-              </Link>
-            </li>
-            <li>
-              <Link href="/pages/admin-case" className="font-bold text-[#2C3E50]">
-                案件審核
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/pages/volunteer-case"
-                className="font-bold text-[#2C3E50]"
-                style={{ display: user?.role === "volunteer" ? "block" : "none" }}
-              >
-                志工接案
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/pages/member-case"
-                className="font-bold text-[#2C3E50]"
-                style={{ display: user?.role === "member" ? "block" : "none" }}
-              >
-                我的案件
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </div>
-
+     <Navbar user={user} />
       <div className="pt-24 px-4 sm:px-20 flex flex-col items-start gap-8 w-full max-w-4xl">
         <h1 className="text-3xl font-bold">案件審核 (管理員專用)</h1>
         {cases.length === 0 && <p>目前沒有待審核案件</p>}

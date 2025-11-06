@@ -2,7 +2,8 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; // <-- 引入 useRouter
-
+import Image from "next/image";
+import Navbar from "@/components/memberNavbar";
 export default function InformPage() {
   const router = useRouter(); // <-- 初始化 router
   const [fields, setFields] = useState({
@@ -79,7 +80,7 @@ export default function InformPage() {
       await res.json();
       setFields({ name: "", email: "", address: "", phone: "", detail: "" });
       setFile(null);
-      alert("✅ 通報成功，資料已儲存！");
+      alert("✅ 通報成功！");
     } catch (err) {
       setMessage(`❌ 發送失敗，請稍後再試: ${err.message}`);
       alert(`❌ 發送失敗，請稍後再試: ${err.message}`);
@@ -87,16 +88,8 @@ export default function InformPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] font-[family-name:var(--font-geist-sans)] flex flex-col items-center justify-center">
-      <div className="fixed top-0 left-0 w-full shadow-lg p-2 z-50" style={{ backgroundColor: '#8EB9CC' }}>
-        <div className="flex justify-between items-center">
-          <ul className="menu flex gap-4 text-xl lg:text-3xl">
-            <li><Link href="/dashboard" className="font-bold" style={{ color: '#2C3E50' }}>首頁</Link></li>
-            <li><Link href="/pages/reports" className="font-bold" style={{ color: '#2C3E50' }}>通報</Link></li>
-           
-          </ul>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#F5F5F5] flex flex-col items-center font-[family-name:var(--font-geist-sans)]">
+       <Navbar user={user} />
 
       <div className="max-w-lg mx-auto mt-24 p-6 border rounded shadow bg-white w-full">
         <h1 className="text-2xl font-bold mb-4" style={{color: 'black'}}>通報表單</h1>

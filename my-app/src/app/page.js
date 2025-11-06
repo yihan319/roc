@@ -1,10 +1,13 @@
 'use client';
+import Navbar from "@/components/Navbar";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState, useEffect } from 'react';
+import { Menu, X } from "lucide-react"; // 安裝：npm install lucide-react
 
 export default function Home() {
   const [floodData, setFloodData] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // 抓資料庫資料
   useEffect(() => {
@@ -21,27 +24,13 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] font-[family-name:var(--font-geist-sans)] flex flex-col items-center justify-center">
+   <>
+    <Navbar />
+    <div className="pt-10 min-h-screen bg-[#F5F5F5] font-[family-name:var(--font-geist-sans)] flex flex-col items-center justify-center">
       
-      {/* 導覽列 */}
-      <div className="fixed top-0 left-0 w-full shadow-lg p-2 z-50" style={{ backgroundColor: '#8EB9CC' }}>
-        <div className="flex justify-between items-center">
-          <ul className="menu flex gap-4 text-xl lg:text-3xl">
-            <li><Link href="/" className="font-bold" style={{ color: '#2C3E50' }}>首頁</Link></li>
-            <li><a href="https://fhy.wra.gov.tw/fhyv2/alert/warn" className="font-bold" style={{ color: '#2C3E50' }}>水情資訊</a></li>
-            <li><a href="https://www.cwa.gov.tw/V8/C/" className="font-bold" style={{ color: '#2C3E50' }}>天氣狀況</a></li>
-            <li><Link href="http://127.0.0.1:5000" className="font-bold" style={{ color: '#2C3E50' }}>地圖路徑</Link></li>
-             <li><Link href="http://127.0.0.1:5000" className="font-bold" style={{ color: '#2C3E50' }}>影像辨識</Link></li>
-          </ul>
-          <ul className="menu flex gap-4 text-xl lg:text-3xl">
-            <li><Link href="/pages/signup" className="font-bold" style={{ color: '#2C3E50' }}>註冊</Link></li>
-            <li><Link href="/pages/signin" className="font-bold" style={{ color: '#2C3E50' }}>登入</Link></li>
-          </ul>
-        </div>
-      </div>
-
+      
       {/* 主標題區 */}
-      <div className="pt-24 px-4 sm:px-20 flex flex-col items-start gap-8">
+      <div className="pt-10 px-4 sm:px-20 flex flex-col items-start gap-8">
         <div className="flex items-center gap-4">
           <Image
             src="/logonew.svg"
@@ -58,9 +47,9 @@ export default function Home() {
           </h1>
         </div>
 
-        {/* 最新消息標籤與滑動小卡區塊 */}
+        {/* 最新消息區塊 */}
         <div className="w-full max-w-4xl">
-          <div className="flex justify-start mb-4" style={{ marginLeft: 'auto', marginRight: '1rem' }}> {/* 靠右一點點 */}
+          <div className="flex justify-start mb-4" style={{ marginLeft: 'auto', marginRight: '1rem' }}>
             <h2 className="text-2xl font-semibold text-gray-800">最新消息</h2>
           </div>
           <div className="overflow-y-auto h-96 py-4" style={{ maxHeight: '24rem' }}>
@@ -68,7 +57,7 @@ export default function Home() {
               <p className="text-gray-500">目前沒有資料</p>
             )}
             {floodData.map((item) => (
-              <div key={item._id} className="bg-white shadow-md rounded-lg p-4 mb-4 w-full" style={{ minWidth: '100%' }}>
+              <div key={item._id} className="bg-white shadow-md rounded-lg p-4 mb-4 w-full">
                 <h2 className="text-xl font-semibold">
                   <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                     {item.title}
@@ -85,7 +74,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-
     </div>
+    </>
   );
 }

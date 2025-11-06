@@ -1,11 +1,15 @@
 'use client';
+
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
+import Navbar from "@/components/memberNavbar";
+import { useRouter } from 'next/navigation';
 
 export default function LicensesPage() {
+  const router = useRouter();
+  const [user, setUser] = useState(null);
   const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
- 
   useEffect(() => {
     const fetchMembers = async () => {
       try {
@@ -20,6 +24,22 @@ export default function LicensesPage() {
     fetchMembers();
   }, []);
 
+   useEffect(() => {
+      const fetchUser = async () => {
+        const res = await fetch("/api/member", { credentials: "include" });
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data);
+          if (data.role !== "admin") {
+            alert("無權限訪問此頁面");
+            router.push("/dashboard");
+          }
+        } else {
+          router.push("/pages/signin");
+        }
+      };
+      fetchUser();
+    }, [router]);
   
   // pages/licenses/page.js
 // pages/licenses/page.js
@@ -66,15 +86,7 @@ const handleDeleteMember = async (memberId) => {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col items-center font-[family-name:var(--font-geist-sans)]">
-      <div className="fixed top-0 left-0 w-full shadow-lg p-2 z-50" style={{ backgroundColor: "#8EB9CC" }}>
-        <div className="flex justify-between items-center">
-          <ul className="menu flex gap-4 text-xl lg:text-3xl">
-            <li><Link href="/dashboard" className="font-bold text-[#2C3E50]">首頁</Link></li>
-            
-            <li><Link href="/pages/licenses" className="font-bold text-[#2C3E50]">證照認證</Link></li>
-          </ul>
-        </div>
-      </div>
+     <Navbar user={user} />
 
    
       <div className="pt-24 px-4 sm:px-20 flex flex-col items-start gap-8 w-full max-w-5xl">

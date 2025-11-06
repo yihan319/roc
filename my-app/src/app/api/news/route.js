@@ -6,7 +6,7 @@ export async function GET(req, res) {
 
   try {
     const newsList = await News.find().sort({ crawled_at: -1 }).limit(20);
-    console.log("查詢結果:", newsList);
+    console.log("查詢成功");
     return new Response(JSON.stringify(newsList), {
       status: 200,
       headers: { "Content-Type": "application/json" },

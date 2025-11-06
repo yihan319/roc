@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-
+import Navbar from "@/components/Navbar";
 export default function SignupPage() {
   const [formData, setFormData] = useState({
     name: "",
@@ -70,70 +70,11 @@ export default function SignupPage() {
   };
 
   return (
+      <>
+              <Navbar />
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col items-center justify-center">
       {/* 導覽列 */}
-      <div
-        className="fixed top-0 left-0 w-full shadow-lg p-2 z-50"
-        style={{ backgroundColor: "#8EB9CC" }}
-      >
-        <div className="flex justify-between items-center">
-          <ul className="menu flex gap-4 text-xl lg:text-3xl">
-            <li>
-              <Link href="/" className="font-bold" style={{ color: "#2C3E50" }}>
-                首頁
-              </Link>
-            </li>
-            <li>
-              <a
-                href="https://water.taiwanstat.com/"
-                className="font-bold"
-                style={{ color: "#2C3E50" }}
-              >
-                水情資訊
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://fhy.wra.gov.tw/fhyv2/alert/warn"
-                className="font-bold"
-                style={{ color: "#2C3E50" }}
-              >
-                天氣狀況
-              </a>
-            </li>
-            <li>
-              <Link
-                href="/map"
-                className="font-bold"
-                style={{ color: "#2C3E50" }}
-              >
-                地圖路徑
-              </Link>
-            </li>
-          </ul>
-          <ul className="menu flex gap-4 text-xl lg:text-3xl">
-            <li>
-              <Link
-                href="/pages/signup"
-                className="font-bold"
-                style={{ color: "#2C3E50" }}
-              >
-                註冊
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/pages/signin"
-                className="font-bold"
-                style={{ color: "#2C3E50" }}
-              >
-                登入
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </div>
-
+     
       {/* 註冊表單 */}
       <div className="flex items-center justify-center pt-32 pb-10">
         <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-md">
@@ -189,5 +130,6 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

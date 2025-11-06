@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
+import Navbar from "@/components/memberNavbar";
 export default function MemberCasePage() {
   const [cases, setCases] = useState([]);
   const [user, setUser] = useState(null);
@@ -37,26 +37,8 @@ export default function MemberCasePage() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col items-center">
-      <div className="fixed top-0 left-0 w-full shadow-lg p-2 z-50" style={{ backgroundColor: '#8EB9CC' }}>
-        <div className="flex justify-between items-center">
-          <ul className="flex gap-4 text-xl">
-            <li><Link href="/dashboard" className="font-bold text-[#2C3E50]">首頁</Link></li>
-            <li><Link href="/pages/member-case" className="font-bold text-[#2C3E50]">我的案件</Link></li>
-            <li><Link href="/pages/admin-case" className="font-bold text-[#2C3E50]" style={{ display: user?.role === "admin" ? "block" : "none" }}>案件審核</Link></li>
-            <li><Link href="/pages/volunteer-case" className="font-bold text-[#2C3E50]" style={{ display: user?.role === "volunteer" ? "block" : "none" }}>志工接案</Link></li>
-          </ul>
-          <ul className="flex gap-4 text-xl">
-            {user ? (
-              <li className="font-bold text-[#2C3E50]">歡迎, {user.name}</li>
-            ) : (
-              <>
-                <li><Link href="/pages/signup" className="font-bold text-[#2C3E50]">註冊</Link></li>
-                <li><Link href="/pages/signin" className="font-bold text-[#2C3E50]">登入</Link></li>
-              </>
-            )}
-          </ul>
-        </div>
-      </div>
+      <Navbar user={user} />
+     
 
       <div className="pt-24 px-4 sm:px-20 flex flex-col items-start gap-8 w-full max-w-4xl">
         <h1 className="text-3xl font-bold" style={{color: 'black'}}>我的案件</h1>

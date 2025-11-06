@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-
+import Navbar from "@/components/Navbar";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -46,21 +46,10 @@ export default function LoginPage() {
   };
 
   return (
+    <>
+    <Navbar />
     <div className="min-h-screen bg-[#F5F5F5] font-[family-name:var(--font-geist-sans)] flex flex-col items-center justify-center">
-      <div className="fixed top-0 left-0 w-full shadow-lg p-2 z-50" style={{ backgroundColor: '#8EB9CC' }}>
-        <div className="flex justify-between items-center">
-          <ul className="menu flex gap-4 text-xl lg:text-3xl">
-            <li><Link href="/" className="font-bold" style={{ color: '#2C3E50' }}>首頁</Link></li>
-            <li><a href="https://fhy.wra.gov.tw/fhyv2/alert/warn" className="font-bold" style={{ color: '#2C3E50' }}>水情資訊</a></li>
-            <li><a href="https://www.cwa.gov.tw/V8/C/" className="font-bold" style={{ color: '#2C3E50' }}>天氣狀況</a></li>
-            <li><Link href="/map" className="font-bold" style={{ color: '#2C3E50' }}>地圖路徑</Link></li>
-          </ul>
-          <ul className="menu flex gap-4 text-xl lg:text-3xl">
-            <li><Link href="/pages/signup" className="font-bold" style={{ color: '#2C3E50' }}>註冊</Link></li>
-            <li><Link href="/pages/signin" className="font-bold" style={{ color: '#2C3E50' }}>登入</Link></li>
-          </ul>
-        </div>
-      </div>
+     
 
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-md">
@@ -103,5 +92,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
