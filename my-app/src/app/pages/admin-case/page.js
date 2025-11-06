@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Navbar from "@/components/memberNavbar";
+import Navbar from "@/components/Navbar";
 export default function AdminCasePage() {
   const [cases, setCases] = useState([]);
   const [user, setUser] = useState(null);

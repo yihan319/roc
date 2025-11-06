@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; // <-- 引入 useRouter
 import Image from "next/image";
-import Navbar from "@/components/memberNavbar";
+import Navbar from "@/components/Navbar";
 export default function InformPage() {
   const router = useRouter(); // <-- 初始化 router
   const [fields, setFields] = useState({

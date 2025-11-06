@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/memberNavbar";
+import Navbar from "@/components/Navbar";
 export default function MemberCasePage() {
   const [cases, setCases] = useState([]);
   const [user, setUser] = useState(null);
