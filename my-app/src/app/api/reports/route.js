@@ -10,26 +10,42 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // 重用 getUserFromToken
+// 重用 getUserFromToken —— 改成「動態判斷 role」
 async function getUserFromToken(req) {
   const token = req.cookies.get("token")?.value;
   if (!token) return null;
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const { userId, role } = decoded;
-    let user;
-    if (role === "member" || role === "admin") user = await MemberData.findById(userId).lean();
-    else if (role === "volunteer") user = await VolunteerData.findById(userId).lean();
-    return { user, role };
-  } catch {
+    const { userId } = decoded;
+
+    // 1. 先從 member_data 找人（所有人都從這裡開始）
+    const member = await MemberData.findById(userId).lean();
+    if (!member) return null;
+
+    // 2. 檢查是否有志工身份
+    const volunteer = await VolunteerData.findOne({ email: member.email }).lean();
+    const isVolunteer = !!volunteer;
+
+    // 3. 動態決定 role
+    const role = isVolunteer ? "volunteer" : "member";
+
+    // 4. 回傳真實使用者資料（用 member 資料，志工也用同一個）
+    return {
+      user: member,
+      role, // 這才是真實身份！
+    };
+
+  } catch (err) {
+    console.error("Token 驗證失敗:", err);
     return null;
   }
 }
-
 export async function POST(req) {
   try {
     // 檢查身份驗證
     const session = await getUserFromToken(req);
-    if (!session?.user) {
+    if (!session?.user || !["member", "admin", "volunteer"].includes(session.role)) {
   return NextResponse.json({ error: "未登入或無權限" }, { status: 401 });
 }
 
@@ -39,14 +55,14 @@ export async function POST(req) {
     const address = form.get("address");
     const phone = form.get("phone");
     const detail = form.get("detail");
-    const file = form.get("file");
+    const files = form.getAll("files") || [];
 
     if (!name || !email || !address || !phone || !detail) {
       return NextResponse.json({ error: "缺少必要欄位" }, { status: 400 });
     }
 
-    let photoUrl = null;
-
+    const photoUrls = [];
+for (const file of files) {
     if (file && typeof file === "object" && "arrayBuffer" in file) {
       const MAX = 5 * 1024 * 1024;
       if (file.size > MAX) {
@@ -69,9 +85,9 @@ export async function POST(req) {
       const filepath = path.join(uploadDir, filename);
 
       fs.writeFileSync(filepath, buffer);
-      photoUrl = `/uploads/${filename}`;
+      photoUrls.push( `/uploads/${filename}`);
     }
-
+  }
     await connectDB();
 
     const doc = await Case.create({
@@ -80,10 +96,10 @@ export async function POST(req) {
       address,
       phone,
       detail,
-      photoUrl,
+      photoUrls,
       createdBy: session.user.email, // 從 session 設定 createdBy
       status: "pending", // 預設狀態
-      volunteer: null // 預設無志工
+      volunteers: [] // 預設無志工
     });
 
     return NextResponse.json({ message: "通報成功", data: doc.toObject() }, { status: 201 });

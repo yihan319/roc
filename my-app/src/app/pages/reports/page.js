@@ -26,7 +26,12 @@ export default function InformPage() {
           const data = await res.json();
           setUser(data);
         } else {
+          const error = await res.json().catch(() => ({}));
+        if (error.error === "請先登入") {
           router.push("/pages/signin");
+          } else {
+          setUser(null); // 允許志工繼續（後端 POST 會再驗證）
+        }
         }
       } catch (err) {
         console.error("Fetch user failed:", err);
@@ -41,15 +46,31 @@ export default function InformPage() {
   };
 
   const handleFile = (e) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile && selectedFile.type.startsWith("image/") && selectedFile.size < 5 * 1024 * 1024) {
-      setFile(selectedFile);
-      setMessage("");
-    } else {
-      setMessage("❌ 請上傳小於5MB的圖片檔案");
-      setFile(null);
+  const selectedFiles = Array.from(e.target.files || []);
+  
+  // 檢查數量（最多 5 張）
+  if (selectedFiles.length > 5) {
+    setMessage("最多只能上傳 5 張圖片");
+    setFile([]);
+    return;
+  }
+
+  // 檢查每張檔案
+  const validFiles = selectedFiles.filter(file => {
+    if (!file.type.startsWith("image/")) {
+      setMessage("只能上傳圖片檔案");
+      return false;
     }
-  };
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage(`${file.name} 超過 5MB`);
+      return false;
+    }
+    return true;
+  });
+
+  setFile(validFiles);
+  setMessage(validFiles.length > 0 ? `已選擇 ${validFiles.length} 張圖片` : "");
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,7 +85,11 @@ export default function InformPage() {
     try {
       const data = new FormData();
       Object.entries(fields).forEach(([k, v]) => data.append(k, v));
-      if (file) data.append("file", file);
+      if (file && file.length > 0) {
+      file.forEach((f, index) => {
+        data.append("files", f); // 注意：後端要用 "files"
+      });
+    }
 
       const res = await fetch("/api/reports", {
         method: "POST",
@@ -143,8 +168,9 @@ export default function InformPage() {
             />
             <input
               type="file"
-              name="file"
+              name="files"
               accept="image/*"
+              multiple
               onChange={handleFile}
               className="w-full p-2 border rounded"
               style={{color: 'black'}}

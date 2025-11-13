@@ -7,7 +7,7 @@ const ReportSchema = new mongoose.Schema(
     address: { type: String, required: true },
     phone: { type: String, required: true },
     detail: { type: String, required: true },
-    photoUrl: { type: String },
+    photoUrls: [String],
     completionPhotoUrl: { type: String }, // 新增完成照片 URL
     createdBy: { type: String, required: true }, // 用於成員建立的案件 (建立時設定為使用者的 email)
     status: {

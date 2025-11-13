@@ -6,7 +6,28 @@ import { MemberData, VolunteerData } from "@/model/User";
 import jwt from "jsonwebtoken";
 import fs from "fs/promises";
 import path from "path";
+export async function DELETE(req) {
+  try {
+    await connectDB();
+    const { searchParams } = new URL(req.url);
+    const caseId = searchParams.get("caseId");
 
+    if (!caseId) {
+      return NextResponse.json({ error: "缺少 caseId" }, { status: 400 });
+    }
+
+    const deletedCase = await Case.findByIdAndDelete(caseId);
+
+    if (!deletedCase) {
+      return NextResponse.json({ error: "找不到案件" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, message: "案件已刪除" });
+  } catch (err) {
+    console.error("❌ 刪除案件失敗:", err);
+    return NextResponse.json({ error: "伺服器錯誤" }, { status: 500 });
+  }
+}
 async function getUserFromToken(req) {
   const token = req.cookies.get("token")?.value;
   console.log("Received token:", token ? "Present" : "Absent");
@@ -85,20 +106,28 @@ export async function GET(req) {
       cases = await Case.find({ createdBy: session.user.email }).lean();
     }
 
-    const formatted = cases.map((c) => ({
-      ...c,
-      _id: c._id.toString(),
-      photoUrl: c.photoUrl
-        ? c.photoUrl.startsWith("http")
-          ? c.photoUrl
-          : `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${c.photoUrl}`
-        : null,
-      completionPhotoUrl: c.completionPhotoUrl
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://120.125.83.33:80";
+
+    const formatted = cases.map((c) => {
+      const photoUrls = Array.isArray(c.photoUrls)
+        ? c.photoUrls.map(url => 
+            url && !url.startsWith("http") ? `${baseUrl}${url}` : url
+          ).filter(Boolean)
+        : [];
+
+      const completionPhotoUrl = c.completionPhotoUrl
         ? c.completionPhotoUrl.startsWith("http")
           ? c.completionPhotoUrl
-          : `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}${c.completionPhotoUrl}`
-        : null,
-    }));
+          : `${baseUrl}${c.completionPhotoUrl}`
+        : null;
+
+      return {
+        ...c,
+        _id: c._id.toString(),
+        photoUrls,
+        completionPhotoUrl,
+      };
+    });
 
     return NextResponse.json(formatted);
   } catch (err) {
@@ -147,7 +176,7 @@ export async function PATCH(req) {
     if (!c) return NextResponse.json({ error: "找不到案件" }, { status: 404 });
 
     if (session.role === "admin") {
-      if (!["approve", "reject", "approve_completion", "reject_completion"].includes(action)) {
+      if (!["approve", "reject", "approve_completion", "reject_completion","take"].includes(action)) {
         return NextResponse.json({ error: "非法操作" }, { status: 400 });
       }
       if (action === "approve") c.status = "approved";

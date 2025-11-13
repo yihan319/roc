@@ -14,7 +14,7 @@ export default function MemberCasePage() {
       if (res.ok) {
         const data = await res.json();
         setUser(data);
-        if (data.role !== "member") {
+        if (data.role !== "member" && data.role !== "admin") {
           alert("無權限訪問此頁面");
           router.push("/dashboard");
         }
@@ -33,7 +33,7 @@ export default function MemberCasePage() {
     if (user && user.role === "member") fetchCases();
   }, [user]);
 
-  if (!user || user.role !== "member") return <p className="text-center mt-10">載入中或無權限...</p>;
+  if (!user || user.role !== "member" && user.role !== "admin") return <p className="text-center mt-10">載入中或無權限...</p>;
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col items-center">

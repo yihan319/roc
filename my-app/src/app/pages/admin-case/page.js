@@ -50,6 +50,21 @@ useEffect(() => {
 
 
   const handleAction = async (caseId, action, reason = "") => {
+    if (action === "delete") {
+    if (!confirm("確定要刪除此案件嗎？")) return;
+    const res = await fetch(`/api/case?caseId=${caseId}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    if (res.ok) {
+      setCases((prev) => prev.filter((c) => c._id !== caseId));
+      alert("案件已刪除");
+    } else {
+      alert("刪除失敗");
+    }
+    return;
+  }
+
   const res = await fetch("/api/case", {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
@@ -59,7 +74,7 @@ useEffect(() => {
     if (res.ok) {
       const updated = await res.json();
       setCases((prev) => prev.filter((c) => c._id !== updated.case._id));
-      alert("操作成功");
+      alert("案件審核通過");
     } else {
       const errorData = await res.json();
       alert(errorData.error || "操作失敗");
@@ -123,22 +138,27 @@ useEffect(() => {
   </div>
 )}
 
-            {c.photoUrl ? (
-              <img
-                src={
-                  typeof c.photoUrl === "string" && c.photoUrl.startsWith("http")
-                    ? c.photoUrl
-                    : `http://localhost:3000${c.photoUrl || ""}`
-                }
-                alt="案件圖片"
-                className="w-full max-w-xs h-auto mt-2 rounded"
-                onError={(e) => console.error("Image load error:", c.photoUrl)}
-              />
-            ) : (
-              <p>
-                <strong>圖片:</strong> 無圖片
-              </p>
-            )}
+            {c.photoUrls && c.photoUrls.length > 0 ? (
+  <div className="mt-2">
+    <strong>通報照片：</strong>
+    <div className="grid grid-cols-2 gap-2 mt-1">
+      {c.photoUrls.map((url, index) => (
+        <img
+          key={index}
+          src={url}
+          alt={`通報圖片 ${index + 1}`}
+          className="w-full h-40 object-cover rounded border"
+          onError={(e) => {
+            console.error("Image load error:", url);
+            e.target.src = "/placeholder.jpg"; // 備用圖
+          }}
+        />
+      ))}
+    </div>
+  </div>
+) : (
+  <p><strong>通報照片：</strong> 無圖片</p>
+)}
             {c.status === "pending" && (
               <div className="flex gap-2 mt-2">
                 <button
@@ -148,10 +168,7 @@ useEffect(() => {
                   通過
                 </button>
                 <button
-  onClick={() => {
-    const reason = prompt("請輸入退回理由：", "照片模糊或不清晰");
-    if (reason !== null) handleAction(c._id, "reject_completion", reason);
-  }}
+  onClick={() => handleAction(c._id, "delete")}
   className="bg-red-500 text-white px-2 py-1 rounded"
 >
   退回

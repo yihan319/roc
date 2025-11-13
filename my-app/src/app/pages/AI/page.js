@@ -7,10 +7,10 @@ export default function MapPage() {
      <>
         {/* <Navbar user={user} /> */}
         <Navbar />
-    <div className="w-full h-screen ">
+    <div className="w-full h-screen -mt-6">
       <iframe
         id="AI"
-        src="http://localhost:80"  // ✅ 地圖專案的網址
+        src="http://120.125.83.33:5050"  // ✅ AI辨識功能的網址
         style={{
           width: "100%",
           height: "100%",

@@ -20,16 +20,19 @@ const ROLE_MENUS = {
   member: [
     { name: '通報', href: '/pages/reports' },
     { name: '我的案件', href: '/pages/member-case' },
+    { name: '會員頁面', href: '/dashboard' },
   ],
   volunteer: [
     { name: '通報', href: '/pages/reports' },
     { name: '志工接案', href: '/pages/volunteer-case' },
+    { name: '會員頁面', href: '/dashboard' },
   ],
   admin: [
     { name: '通報', href: '/pages/reports' },
     { name: 'AI辨識', href: '/pages/AI' },
     { name: '案件審核', href: '/pages/admin-case' },
     { name: '證照認證', href: '/pages/licenses' },
+    { name: '會員頁面', href: '/dashboard' },
   ],
 };
 
@@ -140,16 +143,16 @@ export default function Navbar() {
             ))}
 
             {/* 一般會員專區 */}
-            {(role === 'member' || role === 'guest') &&
-              renderDropdown('一般會員專區', [...COMMON_ITEMS, ...ROLE_MENUS.member], 'member')}
+            {(role === 'member' || role === 'guest'|| role === 'admin') &&
+              renderDropdown('一般會員專區', [...ROLE_MENUS.member], 'member','admin')}
 
             {/* 志工專區 */}
-            {(role === 'volunteer' || role === 'admin' || role === 'guest') &&
-              renderDropdown('志工專區', [...COMMON_ITEMS, ...ROLE_MENUS.volunteer], 'volunteer')}
+            {(role === 'volunteer' || role === 'admin' ) &&
+              renderDropdown('志工專區', [...ROLE_MENUS.volunteer], 'volunteer','admin')}
 
             {/* 管理員專區 */}
             {role === 'admin' &&
-              renderDropdown('管理員專區', [...COMMON_ITEMS, ...ROLE_MENUS.admin], 'admin')}
+              renderDropdown('管理員專區', [...ROLE_MENUS.admin], 'admin')}
           </ul>
 
           {/* 右側按鈕 */}
